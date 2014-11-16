@@ -1,10 +1,56 @@
 #!/usr/bin/env python
 
-import wx
-import os
 from filemanager import *
 import gettext
 import subprocess
+
+class RenameFrame(wx.Frame):
+    def __init__(self, *args, **kwds):
+        # begin wxGlade: MyFrame.__init__
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        wx.Frame.__init__(self, *args, **kwds)
+        self.label_1 = wx.TextCtrl(self, wx.ID_ANY,"Movie Name")
+        self.button_1 = wx.Button(self, wx.ID_ANY, _("Set"))
+        self.Bind(wx.EVT_BUTTON,self.do_rename,self.button_1)
+        self.__set_properties()
+        self.__do_layout()
+        # end wxGlade
+
+    def do_rename(self,event):
+        index = MainFrame.my_selection
+        list = MainFrame.customized_movies_list.GetItems()
+        mov_id = mov_to_id(list[index])
+        new_name = self.label_1.GetValue()
+        manager = SQLHandler()
+        manager.handle.execute("""
+                              UPDATE videoinfo
+                              SET videoname='%s'
+                              WHERE id=%d
+                              """ % (new_name,mov_id))
+        manager.handle.commit()
+        manager.close()
+        MainFrame.customized_movies_list.SetString(index,new_name)
+        Rename.Show(0)
+
+    def __set_properties(self):
+        # begin wxGlade: MyFrame.__set_properties
+        self.SetTitle(_("Rename"))
+        self.SetSize((200, 70))
+        self.label_1.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 1, ""))
+        self.button_1.SetMinSize((60, 30))
+        self.button_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        # end wxGlade
+
+    def __do_layout(self):
+        # begin wxGlade: MyFrame.__do_layout
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+        sizer_2 = wx.BoxSizer(wx.VERTICAL)
+        sizer_2.Add(self.label_1, 0, wx.EXPAND, 0)
+        sizer_2.Add(self.button_1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
+        self.SetSizer(sizer_1)
+        self.Layout()
+        # end wxGlade
 
 class ReviewFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -54,7 +100,6 @@ class ReviewFrame(wx.Frame):
         self.Layout()
         # end wxGlade
 
-
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         #   Initialize
@@ -66,6 +111,7 @@ class MainFrame(wx.Frame):
         self.setup_menubar()
 
         #Movies List
+        self.my_selection = 0
         self.setup_movlist()
 
         #Movie Details
@@ -88,7 +134,7 @@ class MainFrame(wx.Frame):
         img = wx.EmptyImage(self.PhotoMaxSize,self.PhotoMaxSize)
         self.mov_poster = wx.StaticBitmap(self, wx.ID_ANY,
                                          wx.BitmapFromImage(img))
-        self.set_scale_img(wx.Image(os.path.expanduser("../mms/images/movies-icon.png"),wx.BITMAP_TYPE_ANY))
+        self.set_scale_img(wx.Image(os.path.expanduser("./images/movies-icon.png"),wx.BITMAP_TYPE_ANY))
         ######
         self.mov_plot = wx.TextCtrl(self, wx.ID_ANY, _(""), style=wx.TE_READONLY|wx.TE_MULTILINE)
         self.imdb_rating = wx.StaticText(self, wx.ID_ANY, _("IMDb Rating"))
@@ -113,7 +159,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_LISTBOX,self.single_click_mov_list,self.customized_movies_list)
         self.Bind(wx.EVT_LISTBOX_DCLICK,self.double_click_mov_list,self.customized_movies_list)
         self.customized_movies_list.Bind(wx.EVT_RIGHT_UP,self.right_click_mov_list)
-
 
     def setup_menubar(self):
         self.Menu = wx.MenuBar()
@@ -188,22 +233,24 @@ class MainFrame(wx.Frame):
         """
         Create and show a Context Menu
         """
-        print self.my_selection
         # only do this part the first time so the events are only bound once
-        if not hasattr(self, "popupID1"):
-            self.popupID1 = wx.NewId()
-            self.itemThreeId = wx.NewId()
-            self.Bind(wx.EVT_MENU, self.delete_mov_item, id=self.popupID1)
-            self.Bind(wx.EVT_MENU, self.close_me, id=self.itemThreeId)
+        if not hasattr(self, "delete_item"):
+            self.delete_item = wx.NewId()
+            self.rename = wx.NewId()
+            self.Bind(wx.EVT_MENU, self.delete_mov_item, id=self.delete_item)
+            self.Bind(wx.EVT_MENU, self.rename_text, id=self.rename)
 
         # build the menu
         menu = wx.Menu()
-        menu.Append(self.popupID1, "Delete Item")
-        menu.Append(self.itemThreeId, "Exit")
+        menu.Append(self.delete_item, "Delete Item")
+        menu.Append(self.rename, "Rename")
 
         # show the popup menu
         self.PopupMenu(menu)
         menu.Destroy()
+
+    def rename_text(self,event):
+        Rename.Show()
 
     def delete_mov_item(self,event):
         index = self.my_selection
@@ -216,9 +263,8 @@ class MainFrame(wx.Frame):
         map(self.add_movie,get_mov_names())
         self.my_selection = -1
 
-
     def double_click_review_list(self,event):
-        ReviewsFrame.Show(1)
+        Reviews.Show(1)
         self.Show(0)
 
     def on_browse_folder(self, event):
@@ -255,7 +301,6 @@ class MainFrame(wx.Frame):
 
     def synchronize(self, event):
         internet_sync()
-
 
     def close_me(self, event):
         self.Close(True)
@@ -338,8 +383,9 @@ if __name__ == "__main__":
     gettext.install("Movie Management System")
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
-    ReviewsFrame = ReviewFrame(None, wx.ID_ANY, "")
+    Reviews = ReviewFrame(None, wx.ID_ANY, "")
     MainFrame = MainFrame(None, wx.ID_ANY, "")
+    Rename = RenameFrame(None, wx.ID_ANY, "")
     app.SetTopWindow(MainFrame)
     MainFrame.Show()
     app.MainLoop()
