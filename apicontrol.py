@@ -7,6 +7,7 @@ from variables import KEYS_COMMONTABLE,\
     KEYS_IDSTABLE,KEYS_IMDBTABLE,\
     KEYS_REVIEWTABLE,KEYS_RTTABLE
 
+import sqlite3
 
 class VideoHandler:
     """
@@ -46,7 +47,7 @@ class VideoHandler:
             commontable["directors"] = ",".join([d["long imdb canonical name"] for d in info["director"]])
             commontable["kind"] = info["kind"]
             commontable["plot"] = info["plot"][0]
-            commontable["image"] = info["cover url"]
+            commontable["image"] = self.get_image_blob(info["cover url"])
             commontable["genres"] = ",".join(info["genres"])
             commontable["cast"] = ",".join([str(c["long imdb canonical name"].encode("utf-8")) for c in info["cast"]])
             commontable["writers"] = ",".join([str(w["long imdb canonical name"].encode("utf-8")) for w in info["writer"]])
@@ -101,6 +102,12 @@ class VideoHandler:
         except Exception as e:
             print "Error Fetching from RT : %s" % e
         return rttable
+
+    def get_image_blob(self,img_url):
+        resource = urllib2.urlopen(img_url)
+        img_binary = sqlite3.Binary(resource.read())
+        return img_binary
+
 
     def get_review(self,url):
         redditFile = urllib2.urlopen(url)

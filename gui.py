@@ -112,7 +112,8 @@ class MainFrame(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.ICONIZE
         self.frame = wx.Frame.__init__(self, *args, **kwds)
         self.panel = wx.Panel(self.frame)
-        self.PhotoMaxSize = 180
+        # self.SetBackgroundColour(wx.BLACK)
+        self.PhotoMaxSize = 150
         #Menubar
         self.setup_menubar()
 
@@ -213,6 +214,7 @@ class MainFrame(wx.Frame):
             self.imdb_rating_val.SetLabel(str(mov_dict["imdb_rating"]))
             self.imdb_votes_val.SetLabel(str(mov_dict["votes"]))
             self.rt_rating_val.SetLabel(str(mov_dict["rt_rating"]))
+            self.set_scale_img(blob_to_wximage(mov_dict["img"]))
             self.mov_plot.Clear()
             self.mov_plot.WriteText(str(mov_dict["plot"]))
             self.director_val.Clear()
@@ -333,6 +335,7 @@ class MainFrame(wx.Frame):
         self.producer_val.Clear()
         self.starcast_val.Clear()
         self.reviews_list.Clear()
+        self.set_scale_img(wx.Image(os.path.expanduser("./images/movies-icon.png"),wx.BITMAP_TYPE_ANY))
 
     def set_scale_img(self,img):
         W = img.GetWidth()
@@ -356,7 +359,6 @@ class MainFrame(wx.Frame):
         self.title_label.SetFont(wx.Font(13, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.mov_name.SetMinSize((400, 50))
         self.mov_name.SetFont(wx.Font(15, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.mov_poster.SetMinSize((100, 154))
         self.imdb_rating.SetFont(wx.Font(13, wx.DECORATIVE, wx.SLANT, wx.NORMAL, 0, ""))
         self.starcast.SetFont(wx.Font(13, wx.DECORATIVE, wx.SLANT, wx.NORMAL, 0, ""))
         self.rt_rating.SetFont(wx.Font(13, wx.DECORATIVE, wx.SLANT, wx.NORMAL, 0, ""))
@@ -381,7 +383,7 @@ class MainFrame(wx.Frame):
         title_list_split.Add(self.customized_movies_list, 10, wx.EXPAND, 1)
         listing_details_split.Add(title_list_split, 1, wx.EXPAND, 0)
         title_below_split.Add(self.mov_name, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        sizer_2.Add(self.mov_poster, 1, wx.EXPAND, 0)
+        sizer_2.Add(self.mov_poster, 1, wx.EXPAND|wx.LEFT, 50)
         sizer_2.Add(self.mov_plot, 2, wx.EXPAND, 0)
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
         grid_sizer_1.Add(self.imdb_rating, 0, wx.ALIGN_CENTER, 0)

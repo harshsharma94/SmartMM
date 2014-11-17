@@ -42,7 +42,7 @@ CREATE_COMMONTABLE = '''CREATE TABLE COMMONTABLE
            directors    TEXT,
            kind          TEXT,
            plot    TEXT,
-           image    TEXT,
+           image    BLOB,
            genres   TEXT,
            cast TEXT,
            writers  TEXT,
