@@ -4,6 +4,7 @@ from filemanager import *
 import gettext
 import subprocess
 import darkmode
+import movieicon
 
 class RenameFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -143,7 +144,8 @@ class MainFrame(wx.Frame):
         img = wx.EmptyImage(self.PhotoMaxSize,self.PhotoMaxSize)
         self.mov_poster = wx.StaticBitmap(self, wx.ID_ANY,
                                          wx.BitmapFromImage(img))
-        self.set_scale_img(wx.Image(os.path.expanduser("./images/movies-icon.png"),wx.BITMAP_TYPE_ANY))
+        self.set_scale_img(movieicon.getmovies_iconImage())
+        ## Excellent Link for doing above : http://www.blog.pythonlibrary.org/2008/05/23/wxpython-embedding-an-image-in-your-title-bar/
         ######
         self.mov_plot = wx.TextCtrl(self, wx.ID_ANY, _(""), style=wx.TE_READONLY|wx.TE_MULTILINE)
         self.imdb_rating = wx.StaticText(self, wx.ID_ANY, _("IMDb Rating"))
@@ -192,7 +194,7 @@ class MainFrame(wx.Frame):
         self.exit = wx.MenuItem(self.about, wx.ID_EXIT, _("Exit"), "", wx.ITEM_NORMAL)
         self.Bind(wx.EVT_MENU,self.close_me,self.exit)
         self.about.AppendItem(self.exit)
-        self.Menu.Append(self.about, _("About"))
+        self.Menu.Append(self.about, _("Extras"))
         self.SetMenuBar(self.Menu)
 
     def reset_mov_list(self,event):
