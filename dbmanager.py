@@ -60,8 +60,9 @@ class SQLHandler:
         imdb_id = dic["imdb_id"]
         reviewers = dic["reviewers"]
         review_urls = dic["review_urls"]
+        reviews = dic["reviews"]
         for i in xrange(len(reviewers)):
-            self.execute('INSERT INTO reviews_table(imdb_id,review_url,reviewer,review) values(?,?,?,?)',(imdb_id,review_urls[i],reviewers[i],None))
+            self.execute('INSERT INTO reviews_table(imdb_id,review_url,reviewer,review) values(?,?,?,?)',(imdb_id,review_urls[i],reviewers[i],reviews[i]))
         self.handle.commit()
 
     def delete_record(self,id):

@@ -4,7 +4,7 @@ from extras import *
 from joblib import Parallel,delayed
 import threading
 
-#TODO:Update UI with whats been added in the database
+#TODO:Reviews,Image
 
 
 def first_load():
@@ -49,7 +49,7 @@ def name_clean(name):
     "XVid","sC0rp","PTpower","OSCARS","DXVA","MXMG","3LT0N","TiTAN","4PlayHD","HQ","HDRiP","MoH","MP4","BadMeetsEvil",
     "XViD","3Li","PTpOWeR","3D","HSBS","CC","RiPS","WEBRip","R5","PSiG","'GokU61","GB","GokU61","NL","EE","Rel","NL",
     "PSEUDO","DVD","Rip","NeRoZ","EXTENDED","DVDScr","xvid","WarrLord","SCREAM","MERRY","XMAS","iMB","7o9",
-    "Exclusive","171","DiDee","v2","Imdb","N@tive","Bluray","BR"
+    "Exclusive","171","DiDee","v2","Imdb","N@tive","Bluray","BR","Dual Audio","TheAaax9","world4free"
     ]
     year=0
     for y in range(1900,2014):
@@ -117,7 +117,7 @@ def id_to_details(id):
     cur_reviewdetails = \
         my_handle.handle.execute(
             """
-            select reviewer,review_url
+            select reviewer,review_url,review
             FROM reviews_table,idstable
             WHERE idstable.imdb_id = reviews_table.imdb_id
             AND idstable.id = %d
@@ -126,10 +126,12 @@ def id_to_details(id):
     rt_details = cur_rtdetails.fetchone()
     reviewers = []
     review_urls = []
+    reviews = []
     for row in cur_reviewdetails:
         reviewers.append(row[0])
         review_urls.append(row[1])
-    return imdb_details[0],imdb_details[1],rt_details[0],reviewers,review_urls
+        reviews.append(row[2])
+    return imdb_details[0],imdb_details[1],rt_details[0],reviewers,review_urls,reviews
 
 def prep_mov_details_dict(mov_id):
     my_handle = SQLHandler()
@@ -149,7 +151,7 @@ def prep_mov_details_dict(mov_id):
     mov_dict["producers"] = row[14]
     mov_dict["imdb_rating"],mov_dict["votes"], \
     mov_dict["rt_rating"],mov_dict["reviewers"], \
-    mov_dict["review_urls"] = id_to_details(mov_id)
+    mov_dict["review_urls"],mov_dict["reviews"] = id_to_details(mov_id)
     return mov_dict
 
 def mov_to_id(mov_name):

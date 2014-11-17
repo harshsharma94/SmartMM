@@ -2,13 +2,10 @@ from cStringIO import StringIO
 import urllib2
 import wx
 
-def url_to_wximage(url):
-    wx.wxInitAllImageHandlers()
+def blob_to_wximage(data):
+    wx.InitAllImageHandlers()
     try:
-        fp = urllib2.urlopen(url)
-        data = fp.read()
-        fp.close()
-        img = wx.wxImageFromStream(StringIO(data))
+        img = wx.ImageFromStream(StringIO(data))
         return img
     except:
         # decide what you want to do in case of errors

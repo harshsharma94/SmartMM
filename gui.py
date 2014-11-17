@@ -60,45 +60,51 @@ class ReviewFrame(wx.Frame):
         self.label_1 = wx.StaticText(self, wx.ID_ANY, _("Movie NAme"))
         self.label_2 = wx.StaticText(self, wx.ID_ANY, _("-reviewer naem"))
         self.label_3 = wx.StaticText(self, wx.ID_ANY, _("Reviews"))
-        self.label_4 = wx.StaticText(self, wx.ID_ANY, _("bibibono"))
+        self.panel_1 = wx.Panel(self, wx.ID_ANY)
+        self.label_4 = wx.TextCtrl(self.panel_1, wx.ID_ANY, _("fdsvsdvfsdvsdv"), style=wx.TE_READONLY|wx.TE_MULTILINE)
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Back"))
-        self.button_1.Bind(wx.EVT_BUTTON,self.gotoMainFrame)
+        self.Bind(wx.EVT_BUTTON,self.go_back,self.button_1)
+
         self.__set_properties()
         self.__do_layout()
-        # end wxGlade
+    # end wxGlade
 
-    def gotoMainFrame(self,event):
+    def go_back(self,event):
         MainFrame.Show(1)
-        self.Show(0)
+        Reviews.Show(0)
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
-        self.SetTitle(_("frame_1"))
-        self.SetSize((800, 600))
+        self.SetTitle(_("Read Review"))
+        self.SetSize((900, 700))
         self.label_1.SetMinSize((211, 47))
         self.label_1.SetFont(wx.Font(25, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 1, ""))
         self.label_2.SetMinSize((190, 29))
         self.label_2.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_3.SetMinSize((80, 24))
+        self.label_3.SetMinSize((81, 24))
         self.label_3.SetFont(wx.Font(15, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_4.SetFont(wx.Font(13, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_4.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.panel_1.SetMinSize((800, 550))
         self.button_1.SetMinSize((90, 40))
         self.button_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        # end wxGlade
+    # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: MyFrame.__do_layout
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         sizer_2 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2.Add(self.label_1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_2.Add(self.label_1, 0, wx.EXPAND, 0)
         sizer_2.Add(self.label_2, 0, 0, 0)
         sizer_2.Add(self.label_3, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        sizer_2.Add(self.label_4, 0, 0, 0)
+        sizer_3.Add(self.label_4, 1, wx.EXPAND, 0)
+        self.panel_1.SetSizer(sizer_3)
+        sizer_2.Add(self.panel_1, 1, wx.EXPAND, 0)
         sizer_2.Add(self.button_1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_1)
         self.Layout()
-        # end wxGlade
+    # end wxGlade
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -187,6 +193,7 @@ class MainFrame(wx.Frame):
 
     def reset_mov_list(self,event):
         SQLHandler().resetdb()
+        self.clean_details()
         self.customized_movies_list.Clear()
 
     def add_movie(self,mov_name):
@@ -221,15 +228,7 @@ class MainFrame(wx.Frame):
             map(self.add_review,reviews_info)
         except Exception as e:
             print e
-            self.mov_name.SetLabel("Information Missing")
-            self.imdb_rating_val.SetLabel("")
-            self.imdb_votes_val.SetLabel("")
-            self.rt_rating_val.SetLabel("")
-            self.mov_plot.Clear()
-            self.director_val.Clear()
-            self.producer_val.Clear()
-            self.starcast_val.Clear()
-            self.reviews_list.Clear()
+            self.clean_details()
 
     def double_click_mov_list(self, event):
         index = event.GetSelection()
@@ -266,12 +265,23 @@ class MainFrame(wx.Frame):
         print len(list)
         req_id = mov_to_id(list[index])
         print req_id
+        self.clean_details()
         SQLHandler().delete_record(req_id)
         self.customized_movies_list.Clear()
         map(self.add_movie,get_mov_names())
         self.my_selection = -1
 
     def double_click_review_list(self,event):
+        selected_rev_index = event.GetSelection()
+        mov_id = mov_to_id(self.customized_movies_list.GetItems()[self.my_selection])
+        mov_dict = prep_mov_details_dict(mov_id)
+        mov_name = mov_dict["name"]
+        reviewer_name = mov_dict["reviewers"][selected_rev_index]
+        review = mov_dict["reviews"][selected_rev_index]
+        Reviews.label_1.SetLabel(mov_name)
+        Reviews.label_2.SetLabel(reviewer_name)
+        Reviews.label_4.Clear()
+        Reviews.label_4.WriteText(str(review))
         Reviews.Show(1)
         self.Show(0)
 
@@ -312,6 +322,17 @@ class MainFrame(wx.Frame):
 
     def close_me(self, event):
         self.Close(True)
+
+    def clean_details(self):
+        self.mov_name.SetLabel("Information Missing")
+        self.imdb_rating_val.SetLabel("")
+        self.imdb_votes_val.SetLabel("")
+        self.rt_rating_val.SetLabel("")
+        self.mov_plot.Clear()
+        self.director_val.Clear()
+        self.producer_val.Clear()
+        self.starcast_val.Clear()
+        self.reviews_list.Clear()
 
     def set_scale_img(self,img):
         W = img.GetWidth()

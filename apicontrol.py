@@ -1,6 +1,8 @@
 import imdb
 from rottentomatoes import RT
 import re
+from bs4 import BeautifulSoup
+import urllib2
 from variables import KEYS_COMMONTABLE,\
     KEYS_IDSTABLE,KEYS_IMDBTABLE,\
     KEYS_REVIEWTABLE,KEYS_RTTABLE
@@ -67,12 +69,15 @@ class VideoHandler:
             reviews = ia.get_movie_newsgroup_reviews(ia.get_imdbID(info))["data"]["newsgroup reviews"]
             reviewer_names = []
             review_urls = []
+            review_text = []
             for (name,link) in reviews:
                 reviewer_names.append(name)
                 review_urls.append(link)
+                review_text.append(self.get_review(link))
             reviewtable["imdb_id"] = ia.get_imdbID(info)
             reviewtable["review_urls"] = review_urls
             reviewtable["reviewers"] = reviewer_names
+            reviewtable["reviews"] = review_text
         except Exception as e:
             print "Error Fetching Reviews : %s" % e
         if info["kind"] == "tv series":
@@ -96,6 +101,36 @@ class VideoHandler:
         except Exception as e:
             print "Error Fetching from RT : %s" % e
         return rttable
+
+    def get_review(self,url):
+        redditFile = urllib2.urlopen(url)
+        redditHtml = redditFile.read()
+        redditFile.close()
+        soup = BeautifulSoup(redditHtml)
+        for links in soup.find_all('a'):
+            links.get('href')
+        links = soup.find_all("pre")
+        remove=("<pre>","</pre>")
+        link = []
+        for i in range (len(links)):
+            link.append(str(links[i]))
+        for i in range (len(link)):
+                for ext in remove:
+                    link[i] = link[i].replace(ext,"")
+        if(link[0]!="[ retracted by author ]"):
+            comments = soup.find_all("p")
+            remove = ("<p>","</p>")
+            comment= []
+            for i in range (len(comments)-3):
+                comment.append(str(comments[i]))
+            for i in range (len(comment)):
+                for ext in remove:
+                    comment[i] = comment[i].replace(ext,"")
+
+            review = '\n'.join(comment)
+            return review
+        else:
+            return link[0]
 
 def onlynumbers(name):
     """

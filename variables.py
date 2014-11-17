@@ -19,7 +19,7 @@ KEYS_IMDBTABLE = ['imdb_id','url','rating','votes','imdb_top250']
 
 KEYS_RTTABLE = ['rt_id','name','url','rating_audience','rating_critics','reviews_audience','reviews_critics']
 
-KEYS_REVIEWTABLE = ["id","imdb_id","review_urls","reviewers","review"]
+KEYS_REVIEWTABLE = ["id","imdb_id","review_urls","reviewers","reviews"]
 
 
 
