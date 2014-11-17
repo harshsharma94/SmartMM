@@ -3,6 +3,7 @@
 from filemanager import *
 import gettext
 import subprocess
+import darkmode
 
 class RenameFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -112,6 +113,7 @@ class MainFrame(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.ICONIZE
         self.frame = wx.Frame.__init__(self, *args, **kwds)
         self.panel = wx.Panel(self.frame)
+        self.defaultBackgroundColour = self.GetBackgroundColour()
         # self.SetBackgroundColour(wx.BLACK)
         self.PhotoMaxSize = 150
         #Menubar
@@ -184,8 +186,9 @@ class MainFrame(wx.Frame):
         self.file.AppendItem(self.reset)
         self.Menu.Append(self.file, _("File"))
         self.about = wx.Menu()
-        self.help = wx.MenuItem(self.about, wx.ID_ANY, _("Help"), "", wx.ITEM_NORMAL)
-        self.about.AppendItem(self.help)
+        self.themetoggle = wx.MenuItem(self.about, wx.ID_ANY, _("Toggle Theme"), "", wx.ITEM_NORMAL)
+        self.Bind(wx.EVT_MENU,self.toggle_themes,self.themetoggle)
+        self.about.AppendItem(self.themetoggle)
         self.exit = wx.MenuItem(self.about, wx.ID_EXIT, _("Exit"), "", wx.ITEM_NORMAL)
         self.Bind(wx.EVT_MENU,self.close_me,self.exit)
         self.about.AppendItem(self.exit)
@@ -196,6 +199,11 @@ class MainFrame(wx.Frame):
         SQLHandler().resetdb()
         self.clean_details()
         self.customized_movies_list.Clear()
+
+    def toggle_themes(self,event):
+        darkmode.darkMode(MainFrame,self.defaultBackgroundColour)
+        darkmode.darkMode(Reviews,self.defaultBackgroundColour)
+        darkmode.darkMode(Rename,self.defaultBackgroundColour)
 
     def add_movie(self,mov_name):
         self.customized_movies_list.Insert(mov_name,self.customized_movies_list.GetCount())
@@ -368,6 +376,9 @@ class MainFrame(wx.Frame):
         self.review_title.SetMinSize((80, 10))
         self.review_title.SetFont(wx.Font(13, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.reviews_list.SetSelection(0)
+        self.starcast_val.SetMinSize((140,30))
+        self.director_val.SetMinSize((140,30))
+        self.producer_val.SetMinSize((140,30))
         # end wxGlade
 
     def __do_layout(self):
@@ -395,7 +406,7 @@ class MainFrame(wx.Frame):
         grid_sizer_1.Add(self.director, 0, wx.ALIGN_CENTER, 0)
         grid_sizer_1.Add(self.director_val, 0, wx.ALIGN_CENTER, 0)
         grid_sizer_1.Add(self.imdb_votes, 0, wx.ALIGN_CENTER, 0)
-        grid_sizer_1.Add(self.imdb_votes_val, 0, wx.ALIGN_CENTER, 0)
+        grid_sizer_1.Add(self.imdb_votes_val, 0, wx.ALIGN_LEFT|wx.LEFT|wx.UP, 15)
         grid_sizer_1.Add(self.producer, 0, wx.ALIGN_CENTER, 0)
         grid_sizer_1.Add(self.producer_val, 0, wx.ALIGN_CENTER, 0)
         sizer_1.Add(grid_sizer_1, 1, 0, 0)
@@ -407,7 +418,6 @@ class MainFrame(wx.Frame):
         self.SetSizer(listing_details_split)
         self.Layout()
         # end wxGlade
-
 
 if __name__ == "__main__":
     print "Starting"
