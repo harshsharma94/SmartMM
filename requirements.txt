@@ -1,9 +1,11 @@
 FormEncode==1.2.6
 IMDbPY==5.0
+PyInstaller==2.1.1dev-ef430f5
 SQLAlchemy==0.9.8
 SQLObject==1.6.1
 Tempita==0.5.2
 argparse==1.2.1
+beautifulsoup4==4.3.2
 decorator==3.4.0
 ## FIXME: could not find svn URL in dependency_links for this package:
 joblib==0.8.3-r1
