@@ -49,7 +49,7 @@ def name_clean(name):
     "XVid","sC0rp","PTpower","OSCARS","DXVA","MXMG","3LT0N","TiTAN","4PlayHD","HQ","HDRiP","MoH","MP4","BadMeetsEvil",
     "XViD","3Li","PTpOWeR","3D","HSBS","CC","RiPS","WEBRip","R5","PSiG","'GokU61","GB","GokU61","NL","EE","Rel","NL",
     "PSEUDO","DVD","Rip","NeRoZ","EXTENDED","DVDScr","xvid","WarrLord","SCREAM","MERRY","XMAS","iMB","7o9",
-    "Exclusive","171","DiDee","v2","Imdb","N@tive","Bluray"
+    "Exclusive","171","DiDee","v2","Imdb","N@tive","Bluray","BR"
     ]
     year=0
     for y in range(1900,2014):
@@ -131,27 +131,26 @@ def id_to_details(id):
         review_urls.append(row[1])
     return imdb_details[0],imdb_details[1],rt_details[0],reviewers,review_urls
 
-def prep_mov_details_dict():
+def prep_mov_details_dict(mov_id):
     my_handle = SQLHandler()
-    movdetails_cursor = my_handle.handle.execute('SELECT * FROM commontable')
-    movs_dict = {}
-    for row in movdetails_cursor:
-        mov_dict = {}
-        mov_dict["name"] = row[1]
-        mov_dict["year"] = row[2]
-        mov_dict["directors"] = row[3]
-        mov_dict["kind"] = row[4]
-        mov_dict["plot"] = row[5]
-        mov_dict["img"] = row[6]
-        mov_dict["genres"] = row[7]
-        mov_dict["cast"] = row[8]
-        mov_dict["languages"] = row[13]
-        mov_dict["producers"] = row[14]
-        mov_dict["imdb_rating"],mov_dict["votes"],\
-        mov_dict["rt_rating"],mov_dict["reviewers"],\
-        mov_dict["review_urls"] = id_to_details(row[0])
-        movs_dict[row[0]] = mov_dict
-    return movs_dict
+    movdetails_cursor = my_handle.handle.execute('SELECT * FROM commontable '
+                                                 'WHERE id == %d' % mov_id)
+    row = movdetails_cursor.fetchone()
+    mov_dict = {}
+    mov_dict["name"] = row[1]
+    mov_dict["year"] = row[2]
+    mov_dict["directors"] = row[3]
+    mov_dict["kind"] = row[4]
+    mov_dict["plot"] = row[5]
+    mov_dict["img"] = row[6]
+    mov_dict["genres"] = row[7]
+    mov_dict["cast"] = row[8]
+    mov_dict["languages"] = row[13]
+    mov_dict["producers"] = row[14]
+    mov_dict["imdb_rating"],mov_dict["votes"], \
+    mov_dict["rt_rating"],mov_dict["reviewers"], \
+    mov_dict["review_urls"] = id_to_details(mov_id)
+    return mov_dict
 
 def mov_to_id(mov_name):
     my_handle = SQLHandler()

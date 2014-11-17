@@ -172,6 +172,9 @@ class MainFrame(wx.Frame):
         self.sync = wx.MenuItem(self.file, wx.ID_ANY, _("Synchronize"), "", wx.ITEM_NORMAL)
         self.Bind(wx.EVT_MENU,self.synchronize,self.sync)
         self.file.AppendItem(self.sync)
+        self.reset = wx.MenuItem(self.file, wx.ID_ANY, _("Reset"), "", wx.ITEM_NORMAL)
+        self.Bind(wx.EVT_MENU,self.reset_mov_list,self.reset)
+        self.file.AppendItem(self.reset)
         self.Menu.Append(self.file, _("File"))
         self.about = wx.Menu()
         self.help = wx.MenuItem(self.about, wx.ID_ANY, _("Help"), "", wx.ITEM_NORMAL)
@@ -181,6 +184,10 @@ class MainFrame(wx.Frame):
         self.about.AppendItem(self.exit)
         self.Menu.Append(self.about, _("About"))
         self.SetMenuBar(self.Menu)
+
+    def reset_mov_list(self,event):
+        SQLHandler().resetdb()
+        self.customized_movies_list.Clear()
 
     def add_movie(self,mov_name):
         self.customized_movies_list.Insert(mov_name,self.customized_movies_list.GetCount())
@@ -194,25 +201,26 @@ class MainFrame(wx.Frame):
         self.my_selection = index
         req_id = mov_to_id(list[index])
         try:
-            mov_dict = prep_mov_details_dict()[req_id]
+            mov_dict = prep_mov_details_dict(req_id)
             self.mov_name.SetLabel("%s\n%s" % (mov_dict["name"],mov_dict["genres"]))
-            self.imdb_rating_val.SetLabel(mov_dict["imdb_rating"])
-            self.imdb_votes_val.SetLabel(mov_dict["votes"])
-            self.rt_rating_val.SetLabel(mov_dict["rt_rating"])
+            self.imdb_rating_val.SetLabel(str(mov_dict["imdb_rating"]))
+            self.imdb_votes_val.SetLabel(str(mov_dict["votes"]))
+            self.rt_rating_val.SetLabel(str(mov_dict["rt_rating"]))
             self.mov_plot.Clear()
-            self.mov_plot.WriteText(mov_dict["plot"])
+            self.mov_plot.WriteText(str(mov_dict["plot"]))
             self.director_val.Clear()
-            self.director_val.WriteText(mov_dict["directors"])
+            self.director_val.WriteText(str(mov_dict["directors"]))
             self.producer_val.Clear()
-            self.producer_val.WriteText(mov_dict["producers"])
+            self.producer_val.WriteText(str(mov_dict["producers"]))
             self.starcast_val.Clear()
-            self.starcast_val.WriteText(mov_dict["cast"])
+            self.starcast_val.WriteText(str(mov_dict["cast"]))
             reviewers = mov_dict["reviewers"]
             review_urls = mov_dict["review_urls"]
             reviews_info = zip(reviewers,review_urls)
             self.reviews_list.Clear()
             map(self.add_review,reviews_info)
-        except:
+        except Exception as e:
+            print e
             self.mov_name.SetLabel("Information Missing")
             self.imdb_rating_val.SetLabel("")
             self.imdb_votes_val.SetLabel("")

@@ -8,6 +8,21 @@ DB_NAME = "test.db"
 
 ALLOWED_EXTENSIONS = (".mp4", ".MP4", ".mkv", ".MKV", ".avi", ".AVI", ".flv", ".FLV", ".webm", ".WEBM")
 
+KEYS_COMMONTABLE = ["id","name","year","directors","kind","plot","image",
+                    "genres","cast","writers","runtime",
+                    "cinematographers","musicians","languages","producers",
+                    "year_start","year_end","num_seasons"]
+
+KEYS_IDSTABLE = ['id','imdb_id','rt_id']
+
+KEYS_IMDBTABLE = ['imdb_id','url','rating','votes','imdb_top250']
+
+KEYS_RTTABLE = ['rt_id','name','url','rating_audience','rating_critics','reviews_audience','reviews_critics']
+
+KEYS_REVIEWTABLE = ["id","imdb_id","review_urls","reviewers","review"]
+
+
+
 CREATE_VIDEOINFO = '''CREATE TABLE VIDEOINFO
            (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
            videoname           TEXT NOT NULL UNIQUE ,
@@ -23,22 +38,22 @@ CREATE_IDSTABLE = '''CREATE TABLE IDSTABLE
 CREATE_COMMONTABLE = '''CREATE TABLE COMMONTABLE
            (id  INT PRIMARY KEY ,
            name     TEXT    NOT NULL,
-           year     INT    NOT NULL,
-           director    TEXT    NOT NULL,
-           kind          TEXT    NOT NULL,
-           plot    TEXT    NOT NULL,
-           image    TEXT    NOT NULL,
-           genres   TEXT    NOT NULL,
-           cast TEXT NOT NULL,
-           writers  TEXT    NOT NULL,
-           runtime  TEXT    NOT NULL,
-           cinematographers     TEXT    NOT NULL,
-           musicians    TEXT    NOT NULL,
-           languages    TEXT    NOT NULL,
-           producers    TEXT    NOT NULL,
+           year     INT,
+           directors    TEXT,
+           kind          TEXT,
+           plot    TEXT,
+           image    TEXT,
+           genres   TEXT,
+           cast TEXT,
+           writers  TEXT,
+           runtime  TEXT,
+           cinematographers     TEXT,
+           musicians    TEXT,
+           languages    TEXT,
+           producers    TEXT,
            year_start   TEXT,
            year_end TEXT,
-           number_of_seasons TEXT
+           num_seasons TEXT
            );'''
 
 CREATE_IMDBTABLE = '''CREATE TABLE IMDBTABLE
