@@ -345,7 +345,7 @@ class MainFrame(wx.Frame):
         self.producer_val.Clear()
         self.starcast_val.Clear()
         self.reviews_list.Clear()
-        self.set_scale_img(wx.Image(os.path.expanduser("./images/movies-icon.png"),wx.BITMAP_TYPE_ANY))
+        self.set_scale_img(movieicon.getmovies_iconImage())
 
     def set_scale_img(self,img):
         W = img.GetWidth()
