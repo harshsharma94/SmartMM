@@ -111,7 +111,7 @@ class ReviewFrame(wx.Frame):
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         #   Initialize
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.ICONIZE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE & (~wx.RESIZE_BORDER)
         self.frame = wx.Frame.__init__(self, *args, **kwds)
         self.panel = wx.Panel(self.frame)
         self.defaultBackgroundColour = self.GetBackgroundColour()
