@@ -1,8 +1,8 @@
 Work Division
 
-| Research Topic| Major | Minor |
-| ------------- |:-------------:| -----:|
-| Tool Development | All | All |
-| Sentiment Analysis | Saatvik | Ritika |
-| Keyword-Extraction Summarization | Harsh | Saatvik |
-| Recommendation System | Prashant | Ritika |
+| Person| Tasks |
+| ------------- |:-------------:| 
+| Harsh Sharma | Tool Developement, Keyword Extraction, Review Summarization | 
+| Saatvik Shah | Saatvik |
+| Prashant Bahl | Harsh | 
+| Ritika Gupta | Prashant |
