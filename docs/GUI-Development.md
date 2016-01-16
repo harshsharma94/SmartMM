@@ -15,8 +15,11 @@ Options after Research.
 * Chrome App with Web View ?
 * Supporter Desktop app with a Django server
 
+Scraping ? Any other database ?
 
-wikipedia movie catergories at the end: Keywords - clean
-production cost and other attributes form wikipedia
-Subtitles: Keyword Extraction
-Twitter sentiment analysis
+Further Additions:
+-----------------
+* wikipedia movie categories at the end: Keywords - clean
+* production cost and other attributes from wikipedia
+* Subtitles: Keyword Extraction
+* Twitter sentiment analysis
