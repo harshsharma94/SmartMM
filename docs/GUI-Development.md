@@ -17,6 +17,17 @@ Options after Research.
 
 Scraping ? Any other database ?
 
+Proposed Methods
+
+| Keyword Extraction Methods        | Pros         | Cons  |
+| ------------- |:-------------:| -----:|
+| Co-occurence (RAKE)(2010) |  Statistical, Very good results comparitively, Domain applicable, can also be used for individual documents. No corpus required. Easy to implement| Less Linguistic knowledge used |
+| TFIDF      |   Applicable for Multiple Documents, Easy to implement.  | Requires a corpus, lacks Parts of Speech and Adjacent frequency |
+| POS Unsupervised |   TFIDF + POS filtering , Use of graph improves results  | Supervised has better results, Clustering in Movie Domain is questionable |
+|Supervised|---|Requires labeled training data, which is not available for Movie Reviews
+|Graph Based|TextRank: Works on reccomendation/relation between words/sentences and syntactic filters with co-occurence, Most used by Citations. Linguistic information helps keyword extraction.| Domain-specific
+
+
 Further Additions:
 -----------------
 * wikipedia movie categories at the end: Keywords - clean
