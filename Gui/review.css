@@ -1,0 +1,19 @@
+<style>
+p {
+    display: inline;
+    line-height: 1.5;
+}
+span {
+    display: inline;
+    line-height: 1.5;
+}
+img {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 5px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+</style>
