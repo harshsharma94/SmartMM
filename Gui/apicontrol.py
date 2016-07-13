@@ -82,7 +82,7 @@ class VideoHandler:
 
     def dump_rt(self):
         rttable = dict.fromkeys(KEYS_RTTABLE)
-        rt = RT("wy3s6eaj82m5ztwmsjuhnm38")
+        rt = RT("")
         info =  rt.feeling_lucky(search_term=self.name)
         try:
             rttable["rt_id"] = info["id"]
